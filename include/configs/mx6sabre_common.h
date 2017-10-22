@@ -131,6 +131,8 @@
 	"image=zImage\0" \
 	"fdt_file=undefined\0" \
 	"fdt_addr=0x18000000\0" \
+	"tee_file=optee.bin\0" \
+	"tee_addr=0x20000000\0" \
 	"boot_fdt=try\0" \
 	"ip_dyn=yes\0" \
 	"console=" CONSOLE_DEV "\0" \
@@ -167,11 +169,16 @@
 		"source\0" \
 	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
 	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
+	"loadtee=fatload mmc ${mmcdev}:${mmcpart} ${tee_addr} ${tee_file}\0" \
 	"mmcboot=echo Booting from mmc ...; " \
 		"run mmcargs; " \
 		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
 			"if run loadfdt; then " \
-				"bootz ${loadaddr} - ${fdt_addr}; " \
+				"if run loadtee; then " \
+					"bootm ${tee_addr} - ${fdt_addr}; " \
+				"else " \
+					"bootz ${loadaddr} - ${fdt_addr}; " \
+				"fi; " \
 			"else " \
 				"if test ${boot_fdt} = try; then " \
 					"bootz; " \

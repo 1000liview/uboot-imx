@@ -9,4 +9,8 @@ config SYS_VENDOR
 config SYS_CONFIG_NAME
 	default "mx6sabresd"
 
+config TEE_RAM_SIZE
+	hex "Size of TEE RAM"
+	default "0x2000000"
+
 endif
